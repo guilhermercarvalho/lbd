@@ -2,31 +2,35 @@ version: '3.7'
 
 networks:
   network-banco:
-    name: network-postgres
+    name: lbd-net
     driver: bridge
     ipam:
       driver: default
       config:
         - subnet: 172.20.0.0/29
 
+volumes:
+  postgres-data:
+  pgadmin-data:
+
 services:
   postgres:
     image: postgres:latest
-    container_name: postgresdb
+    container_name: lbd-pgsql
     ports:
       - 5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - "./postgres-data/data:/var/lib/postgresql/data"
+      - postgres-data:/var/lib/postgresql/data
     networks:
       network-banco:
         ipv4_address: 172.20.0.2
     restart: unless-stopped
 
   pgAdmin4:
-    container_name: pgAdmin4
+    container_name: lbd-pgAdmin
     image: dpage/pgadmin4:latest
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
@@ -36,10 +40,10 @@ services:
     ports:
       - 80
     volumes:
-      - "./pgadmin-data/pgadmin:/var/lib/pgadmin"
-      - "./pgadmin-data/certificate.cert:/certs/server.cert"
-      - "./pgadmin-data/certificate.key:/certs/server.key"
-      - "./pgadmin-data/pgadmin4:/pgadmin4/servers.json"
+      - pgadmin-data:/var/lib/pgadmin
+      - pgadmin-data:/certs/server.cert
+      - pgadmin-data:/certs/server.key
+      - pgadmin-data:/pgadmin4/servers.json
     networks:
       network-banco:
         ipv4_address: 172.20.0.3
