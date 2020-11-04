@@ -17,9 +17,9 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: Dockerfile.postgres
-    image: psqldata
-    container_name: lbd-pgadmin
+      dockerfile: ./docker/Dockerfile.postgres
+    image: psql_data
+    container_name: lbd-psql
     ports:
       - 5432
     environment:
@@ -34,7 +34,7 @@ services:
 
 
   pgAdmin4:
-    container_name: pgAdmin4_interface
+    container_name: lbd-pgadmin
     image: dpage/pgadmin4:latest
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
