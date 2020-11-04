@@ -10,20 +10,23 @@ networks:
         - subnet: 172.20.0.0/29
 
 volumes:
-  postgres-data:
-  pgadmin-data:
+  postgres-withdb-data:
+  pgadmin-withdb-data:
 
 services:
   postgres:
-    image: postgres:latest
-    container_name: lbd-pgsql
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    image: psqldata
+    container_name: lbd-pgadmin
     ports:
       - 5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-withdb-data:/var/lib/postgresql/data
     networks:
       network-banco:
         ipv4_address: 172.20.0.2
@@ -31,7 +34,7 @@ services:
 
 
   pgAdmin4:
-    container_name: lbd-pgAdmin
+    container_name: pgAdmin4_interface
     image: dpage/pgadmin4:latest
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
@@ -41,10 +44,10 @@ services:
     ports:
       - 80
     volumes:
-      - pgadmin-data:/var/lib/pgadmin
-      - pgadmin-data:/certs/server.cert
-      - pgadmin-data:/certs/server.key
-      - pgadmin-data:/pgadmin4/servers.json
+      - pgadmin-withdb-data:/var/lib/pgadmin
+      - pgadmin-withdb-data:/certs/server.cert
+      - pgadmin-withdb-data:/certs/server.key
+      - pgadmin-withdb-data:/pgadmin4/servers.json
     networks:
       network-banco:
         ipv4_address: 172.20.0.3
